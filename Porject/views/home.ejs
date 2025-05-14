@@ -1,0 +1,243 @@
+<%- include('partials/header') %>
+
+<div class="hero">
+    <h1>Welcome to Our Vibrant Community</h1>
+    <p>Connecting people, sharing events, and building a stronger community together.</p>
+    <a href="/events" class="btn btn-primary mt-3">Explore Events</a>
+</div>
+
+<div class="featured-events">
+    <h3>Upcoming Events</h3>
+    <p>Check out what's happening soon!</p>
+    <div class="row">
+        <% if (typeof events !== 'undefined' && events.length > 0) { %>
+            <% events.forEach(event => { %>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <img src="/images/events/<%= event.image %>" 
+                             class="card-img-top" 
+                             alt="<%= event.title %>"
+                             onerror="this.src='/images/events/Fooddrive.jpg'">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= event.title %></h5>
+                            <p class="card-text"><%= event.date %> - <%= event.location %></p>
+                            <a href="/events" class="btn btn-outline-info btn-sm">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No upcoming events at the moment. Stay tuned!</p>
+        <% } %>
+    </div>
+    <div class="text-center mt-3">
+        <a href="/events" class="btn btn-outline-secondary">View All Events</a>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="calendar-container">
+                <div class="calendar-header d-flex justify-content-between align-items-center mb-4">
+                    <h2>Event Calendar</h2>
+                    <div class="calendar-search">
+                        <input type="text" class="form-control" id="eventSearch" placeholder="Search events...">
+                    </div>
+                </div>
+                <div id="calendar"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="event-list-container">
+                <h3>Upcoming Events</h3>
+                <div id="eventList" class="event-list"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.calendar-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.calendar-search {
+    width: 250px;
+}
+
+#calendar {
+    min-height: 500px;
+}
+
+.event-list-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.fc-event {
+    cursor: pointer;
+}
+
+.fc-event:hover {
+    opacity: 0.9;
+}
+
+.event-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.event-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s;
+}
+
+.event-item:hover {
+    background-color: #f8f9fa;
+}
+
+.event-item h5 {
+    margin-bottom: 10px;
+    color: #007bff;
+}
+
+.event-item p {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.event-item i {
+    margin-right: 8px;
+}
+.event-tags {
+    margin-top: 8px;
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    border-radius: 15px;
+}
+</style>
+
+<!-- Updated Calendar Dependencies -->
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get events data with proper error handling
+    let events = [];
+    try {
+        const eventsData = '<%- typeof events !== "undefined" ? JSON.stringify(events) : "[]" %>';
+        events = JSON.parse(eventsData);
+    } catch (error) {
+        console.error('Error parsing events data:', error);
+        events = [];
+    }
+    
+    // Format events for calendar with proper date handling
+    const calendarEvents = events.map(event => {
+        const dateStr = event.date;
+        const currentYear = new Date().getFullYear();
+        let date;
+        try {
+            date = new Date(`${dateStr}, ${currentYear}`);
+            if (isNaN(date.getTime())) {
+                date = new Date();
+                console.warn(`Invalid date format for event: ${event.title}`);
+            }
+        } catch (e) {
+            date = new Date();
+            console.warn(`Error parsing date for event: ${event.title}`, e);
+        }
+        
+        return {
+            title: event.title,
+            start: date,
+            description: event.description,
+            location: event.location,
+            backgroundColor: '#007bff',
+            borderColor: '#0056b3',
+            url: `/contact?event=${encodeURIComponent(event.title)}`
+        };
+    });
+
+    // Initialize calendar with all events
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: calendarEvents,
+        eventClick: function(info) {
+            info.jsEvent.preventDefault();
+            window.location.href = info.event.url;
+        },
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,dayGridWeek'
+        },
+        height: 'auto',
+        firstDay: 1,
+        displayEventTime: false,
+        eventDidMount: function(info) {
+            info.el.title = `${info.event.title}\nLocation: ${info.event.extendedProps.location}\n${info.event.extendedProps.description}`;
+        }
+    });
+    calendar.render();
+
+    // Function to update event list with tags
+    function updateEventList(events) {
+        const eventListEl = document.getElementById('eventList');
+        eventListEl.innerHTML = events.map(event => {
+            // Generate tags based on event title
+            const tags = ['Community'];
+            if (event.title.toLowerCase().includes('tech')) tags.push('Technology');
+            if (event.title.toLowerCase().includes('art')) tags.push('Arts');
+            if (event.title.toLowerCase().includes('food')) tags.push('Food');
+            if (event.title.toLowerCase().includes('sport')) tags.push('Sports');
+            
+            const tagHtml = tags.map(tag => 
+                `<span class="badge ${getTagColor(tag)} me-1">${tag}</span>`
+            ).join('');
+            
+            return `
+                <div class="event-item">
+                    <h5>${event.title}</h5>
+                    <p>
+                        <i class="bi bi-calendar-event"></i> ${event.date}<br>
+                        <i class="bi bi-geo-alt"></i> ${event.location}
+                    </p>
+                    <div class="event-tags">
+                        ${tagHtml}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // Helper function to get tag color
+    function getTagColor(tag) {
+        const colors = {
+            'Community': 'bg-primary',
+            'Technology': 'bg-info',
+            'Arts': 'bg-success',
+            'Food': 'bg-warning',
+            'Sports': 'bg-danger'
+        };
+        return colors[tag] || 'bg-secondary';
+    }
+    
+    // Initialize event list with all events
+    updateEventList(events);
+});
+</script>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,112 @@
+<%- include('partials/header') %>
+
+<div class="hero text-center py-5">
+    <h1>Welcome to Our Community</h1>
+    <p>Connecting People, Building Future</p>
+</div>
+
+<div class="container">
+    <!-- Latest Events Section -->
+    <section class="mb-5">
+        <h2>Upcoming Events</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="/images/events/tech-conference.jpg" class="card-img-top" alt="Tech Conference">
+                    <div class="card-body">
+                        <h5 class="card-title">Annual Tech Conference 2024</h5>
+                        <p class="card-text">Join us for the biggest tech conference in the region. Learn from industry experts!</p>
+                        <p class="text-muted">Date: March 15, 2024</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="/images/events/community-fair.jpg" class="card-img-top" alt="Community Fair">
+                    <div class="card-body">
+                        <h5 class="card-title">Spring Community Fair</h5>
+                        <p class="card-text">A day of fun, food, and community bonding. Bring your family!</p>
+                        <p class="text-muted">Date: April 5, 2024</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="/images/events/workshop.jpg" class="card-img-top" alt="Workshop">
+                    <div class="card-body">
+                        <h5 class="card-title">Digital Skills Workshop</h5>
+                        <p class="card-text">Learn essential digital skills for the modern workplace.</p>
+                        <p class="text-muted">Date: March 28, 2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest News Section -->
+    <section class="mb-5">
+        <h2>Latest News</h2>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Community Center Renovation Complete</h5>
+                        <p class="card-text">Our newly renovated community center is now open with state-of-the-art facilities!</p>
+                        <p class="text-muted">Posted: February 1, 2024</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">New Youth Program Launches</h5>
+                        <p class="card-text">Exciting new program for youth development and leadership training.</p>
+                        <p class="text-muted">Posted: January 28, 2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section bg-light p-5 rounded">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="mb-3">Stay Connected</h2>
+                <p class="lead mb-4">Get the latest updates about community events, initiatives, and opportunities delivered to your inbox.</p>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Weekly event updates</li>
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Community news and stories</li>
+                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Volunteer opportunities</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <form id="newsletterForm">
+                            <div class="mb-3">
+                                <input type="email" class="form-control form-control-lg" placeholder="Enter your email">
+                            </div>
+                            <button class="btn btn-primary btn-lg w-100" type="submit">Subscribe Now</button>
+                        </form>
+                        <div id="subscribeSuccess" class="alert alert-success mt-3 d-none">
+                            Successfully subscribed! Welcome to our community.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    document.getElementById('subscribeSuccess').classList.remove('d-none');
+    setTimeout(() => {
+        document.getElementById('subscribeSuccess').classList.add('d-none');
+    }, 3000);
+});
+</script>
+
+<%- include('partials/footer') %>
